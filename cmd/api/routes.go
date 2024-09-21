@@ -20,6 +20,17 @@ func (app *application) routes() http.Handler {
 	// respectively.
 	router.HandlerFunc(http.MethodGet, "/v1/healthcheck", app.healthcheckHandler)
 
+	router.HandlerFunc(http.MethodGet, "/v1/gnovels", app.healthcheckHandler)
+
+	router.HandlerFunc(http.MethodPost, "/v1/gnovels", app.healthcheckHandler)
+	router.HandlerFunc(http.MethodGet, "/v1/gnovels/:id", app.getGraphicNovelHandler)
+	router.HandlerFunc(http.MethodPut, "/v1/gnovels/:id", app.healthcheckHandler)
+	router.HandlerFunc(http.MethodDelete, "/v1/gnovels/:id", app.healthcheckHandler)
+
+	router.HandlerFunc(http.MethodGet, "/v1/gnovels/:id/chapter/:nchapter", app.healthcheckHandler)
+	router.HandlerFunc(http.MethodPut, "/v1/gnovels/:id/chapter/:nchapter", app.healthcheckHandler)
+	router.HandlerFunc(http.MethodDelete, "/v1/gnovels/:id/chapter/:nchapter", app.healthcheckHandler)
+
 	// Return the httprouter instance.
 	return app.recoverPanic(router)
 }
