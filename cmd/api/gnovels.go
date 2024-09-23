@@ -3,6 +3,9 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"time"
+
+	"juanmagc99.comic-chest/internal/data"
 )
 
 // Handler for GET /v1/gnovels
@@ -19,13 +22,28 @@ func (app *application) createGraphicNovelHandler(w http.ResponseWriter, r *http
 
 // Handler for GET /v1/gnovels/:id
 func (app *application) getGraphicNovelHandler(w http.ResponseWriter, r *http.Request) {
-	// Aquí iría la lógica para obtener una graphic novel por su ID
-	// Puedes obtener el ID de la novela gráfica desde la URL
 	id, err := app.readIntParam(r, "id")
 	if err != nil {
 		app.notFoundResponse(w, r)
 	}
-	fmt.Fprintf(w, "Getting graphic novel with ID: %d\n", id)
+
+	gnovel := data.Gnovel{
+		ID:        id,
+		CreatedAt: time.Now(),
+		Title:     "Black Lagoon",
+		Description: `The series follows the Lagoon Company, a four-member team of pirate mercenaries smuggling
+		 goods in and around the seas of Southeast Asia with their PT boat, the Black Lagoon.The group 
+		 takes on various jobs, usually involving criminal organizations, and resulting in violent gunfights.`,
+		Genres: []string{"Action", "Drama"},
+		Author: "Rei Hiroe",
+		Year:   2002,
+		GNType: "Manga",
+	}
+
+	err = app.writeJSON(w, http.StatusOK, envelope{"gnovel": gnovel}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
 }
 
 // Handler for PUT /v1/gnovels/:id

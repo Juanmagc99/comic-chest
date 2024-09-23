@@ -19,9 +19,9 @@ type Gnovel struct {
 	GNType      string    `json:"type"`
 	Title       string    `json:"title"`
 	Description string    `json:"description"`
+	Genres      []string  `json:"genres"`
 	Author      string    `json:"author"`
 	Year        int32     `json:"year"`
-	Genres      []string  `json:"genres"`
 }
 
 type MovieModel struct {
