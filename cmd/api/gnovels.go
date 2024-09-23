@@ -34,10 +34,12 @@ func (app *application) getGraphicNovelHandler(w http.ResponseWriter, r *http.Re
 		Description: `The series follows the Lagoon Company, a four-member team of pirate mercenaries smuggling
 		 goods in and around the seas of Southeast Asia with their PT boat, the Black Lagoon.The group 
 		 takes on various jobs, usually involving criminal organizations, and resulting in violent gunfights.`,
-		Genres: []string{"Action", "Drama"},
-		Author: "Rei Hiroe",
-		Year:   2002,
-		GNType: "Manga",
+		Genres:   []string{"Action", "Drama"},
+		Author:   "Rei Hiroe",
+		Status:   "ongoing",
+		NChapers: 78,
+		Year:     2002,
+		GNType:   "Manga",
 	}
 
 	err = app.writeJSON(w, http.StatusOK, envelope{"gnovel": gnovel}, nil)

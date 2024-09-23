@@ -12,6 +12,7 @@ var genres = []string{"Action", "Adventure", "Comedy", "Drama", "Fantasy", "Hist
 	"Horror", "Isekai", "Magic", "Martial Arts", "Mecha", "Military", "Mystery", "Psychological",
 	"Romance", "School Life", "Sci-Fi", "Seinen", "Shoujo", "Shounen", "Slice of Life", "Sports",
 	"Supernatural", "Thriller", "Tragedy", "Vampire"}
+var status = []string{"ongoing", "ended", ""}
 
 type Gnovel struct {
 	ID          int64     `json:"id"`
@@ -20,6 +21,8 @@ type Gnovel struct {
 	Title       string    `json:"title"`
 	Description string    `json:"description"`
 	Genres      []string  `json:"genres"`
+	Status      string    `json:"status"`
+	NChapers    int       `json:"nchapters"`
 	Author      string    `json:"author"`
 	Year        int32     `json:"year"`
 }
@@ -52,5 +55,9 @@ func ValidateMovie(v *validator.Validator, gnovel *Gnovel) {
 	for _, genre := range genres {
 		v.Check(validator.PermittedValue(genre, genres...), "genres", "genres must be valid options")
 	}
+
+	v.Check(validator.PermittedValue(gnovel.Status), "status", "status mus be a valid option")
+
+	v.Check(gnovel.NChapers >= 0, "nchapters", "chapters must be equal or greater than 0")
 
 }
