@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"time"
 
+	_ "github.com/lib/pq"
+
 	"juanmagc99.comic-chest/internal/data"
 )
 

@@ -27,7 +27,7 @@ type Gnovel struct {
 	Year        int32     `json:"year"`
 }
 
-type MovieModel struct {
+type GnovelModel struct {
 	DB *sql.DB
 }
 
