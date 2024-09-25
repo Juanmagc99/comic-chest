@@ -1,9 +1,9 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
-	"time"
 
 	_ "github.com/lib/pq"
 
@@ -74,12 +74,23 @@ func (app *application) getGraphicNovelHandler(w http.ResponseWriter, r *http.Re
 		app.notFoundResponse(w, r)
 	}
 
-	gnovel := data.Gnovel{
+	gnovel, err := app.models.Gnovels.Get(id)
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrRecordNotFound):
+			app.notFoundResponse(w, r)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	/*gnovel := data.Gnovel{
 		ID:        id,
 		CreatedAt: time.Now(),
 		Title:     "Black Lagoon",
 		Description: `The series follows the Lagoon Company, a four-member team of pirate mercenaries smuggling
-		 goods in and around the seas of Southeast Asia with their PT boat, the Black Lagoon.The group 
+		 goods in and around the seas of Southeast Asia with their PT boat, the Black Lagoon.The group
 		 takes on various jobs, usually involving criminal organizations, and resulting in violent gunfights.`,
 		Genres:   []string{"Action", "Drama"},
 		Author:   "Rei Hiroe",
@@ -87,7 +98,7 @@ func (app *application) getGraphicNovelHandler(w http.ResponseWriter, r *http.Re
 		NChapers: 78,
 		Year:     2002,
 		GNType:   "Manga",
-	}
+	}*/
 
 	err = app.writeJSON(w, http.StatusOK, envelope{"gnovel": gnovel}, nil)
 	if err != nil {

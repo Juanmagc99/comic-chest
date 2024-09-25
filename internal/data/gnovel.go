@@ -3,6 +3,7 @@ package data
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"time"
 
 	"github.com/lib/pq"
@@ -17,7 +18,7 @@ var genres = []string{"Action", "Adventure", "Comedy", "Drama", "Fantasy", "Hist
 var status = []string{"ongoing", "ended", ""}
 
 type Gnovel struct {
-	ID          int64     `json:"id"`
+	ID          int64     `json:"-"`
 	CreatedAt   time.Time `json:"-"`
 	GNType      string    `json:"type"`
 	Title       string    `json:"title"`
@@ -78,4 +79,46 @@ func (m GnovelModel) Insert(gnovel *Gnovel) error {
 		0, gnovel.Author, gnovel.Year, gnovel.Status}
 
 	return m.DB.QueryRowContext(ctx, query, args...).Scan(&gnovel.ID, &gnovel.CreatedAt)
+}
+
+func (m GnovelModel) Get(id int64) (*Gnovel, error) {
+	//Id already checked before this function
+
+	query := `
+		SELECT *
+		FROM gnovels
+		WHERE id = $1
+	`
+
+	var gnovel Gnovel
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+
+	defer cancel()
+
+	err := m.DB.QueryRowContext(ctx, query, id).Scan(
+		&gnovel.ID,
+		&gnovel.CreatedAt,
+		&gnovel.GNType,
+		&gnovel.Title,
+		&gnovel.Description,
+		pq.Array(&gnovel.Genres),
+		&gnovel.Status,
+		&gnovel.NChapers,
+		&gnovel.Author,
+		&gnovel.Year,
+	)
+
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, ErrRecordNotFound
+		default:
+			return nil, err
+		}
+	}
+
+	// Otherwise, return a pointer to the Movie struct.
+	return &gnovel, nil
+
 }
