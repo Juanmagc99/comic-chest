@@ -8,6 +8,7 @@ import (
 	_ "github.com/lib/pq"
 
 	"juanmagc99.comic-chest/internal/data"
+	"juanmagc99.comic-chest/internal/validator"
 )
 
 // Handler for GET /v1/gnovels
@@ -18,8 +19,52 @@ func (app *application) listGraphicNovelsHandler(w http.ResponseWriter, r *http.
 
 // Handler for POST /v1/gnovels
 func (app *application) createGraphicNovelHandler(w http.ResponseWriter, r *http.Request) {
-	// Aquí iría la lógica para crear una nueva graphic novel
-	fmt.Fprintln(w, "Creating a new graphic novel")
+	var input struct {
+		GNType      string   `json:"type"`
+		Title       string   `json:"title"`
+		Description string   `json:"description"`
+		Genres      []string `json:"genres"`
+		Status      string   `json:"status"`
+		Author      string   `json:"author"`
+		Year        int32    `json:"year"`
+	}
+
+	err := app.readJSON(w, r, &input)
+	if err != nil {
+		app.badRequestResponse(w, r, err)
+		return
+	}
+
+	gnovel := &data.Gnovel{
+		GNType:      input.GNType,
+		Title:       input.Title,
+		Description: input.Description,
+		Genres:      input.Genres,
+		Status:      input.Status,
+		Author:      input.Author,
+		Year:        input.Year,
+	}
+
+	v := validator.New()
+
+	if data.ValidateMovie(v, gnovel); !v.Valid() {
+		app.failedValidationResponse(w, r, v.Errors)
+		return
+	}
+
+	err = app.models.Gnovels.Insert(gnovel)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	headers := make(http.Header)
+	headers.Set("Location", fmt.Sprintf("/v1/gnovels/%d", gnovel.ID))
+
+	err = app.writeJSON(w, http.StatusCreated, envelope{"gnovel": gnovel}, headers)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
 }
 
 // Handler for GET /v1/gnovels/:id

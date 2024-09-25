@@ -36,7 +36,7 @@ func main() {
 	flag.IntVar(&cfg.port, "port", 4000, "API server port")
 	flag.StringVar(&cfg.env, "env", "development", "Environment (development|staging|production)")
 
-	flag.StringVar(&cfg.db.dsn, "db-dsn", "postgres://comichect:1234@localhost/comichest?sslmode=disable", "PostgreSQL DSN")
+	flag.StringVar(&cfg.db.dsn, "db-dsn", "postgres://comichest:1234@localhost/comichest?sslmode=disable", "PostgreSQL DSN")
 	//Create logger which writes log entries to the stardard out
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 

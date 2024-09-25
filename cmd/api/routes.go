@@ -22,7 +22,7 @@ func (app *application) routes() http.Handler {
 
 	router.HandlerFunc(http.MethodGet, "/v1/gnovels", app.healthcheckHandler)
 
-	router.HandlerFunc(http.MethodPost, "/v1/gnovels", app.healthcheckHandler)
+	router.HandlerFunc(http.MethodPost, "/v1/gnovels", app.createGraphicNovelHandler)
 	router.HandlerFunc(http.MethodGet, "/v1/gnovels/:id", app.getGraphicNovelHandler)
 	router.HandlerFunc(http.MethodPut, "/v1/gnovels/:id", app.healthcheckHandler)
 	router.HandlerFunc(http.MethodDelete, "/v1/gnovels/:id", app.healthcheckHandler)

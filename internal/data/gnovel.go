@@ -1,9 +1,11 @@
 package data
 
 import (
+	"context"
 	"database/sql"
 	"time"
 
+	"github.com/lib/pq"
 	"juanmagc99.comic-chest/internal/validator"
 )
 
@@ -56,8 +58,24 @@ func ValidateMovie(v *validator.Validator, gnovel *Gnovel) {
 		v.Check(validator.PermittedValue(genre, genres...), "genres", "genres must be valid options")
 	}
 
-	v.Check(validator.PermittedValue(gnovel.Status), "status", "status mus be a valid option")
+	v.Check(validator.PermittedValue(gnovel.Status, status...), "status", "status mus be a valid option")
 
 	v.Check(gnovel.NChapers >= 0, "nchapters", "chapters must be equal or greater than 0")
 
+}
+
+func (m GnovelModel) Insert(gnovel *Gnovel) error {
+	query := `
+		INSERT INTO gnovels (gn_type, title, description, genres, nchapters, author, year, status)
+		VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+		RETURNING id, created_at
+	`
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+
+	defer cancel()
+
+	args := []any{gnovel.GNType, gnovel.Title, gnovel.Description, pq.Array(gnovel.Genres),
+		0, gnovel.Author, gnovel.Year, gnovel.Status}
+
+	return m.DB.QueryRowContext(ctx, query, args...).Scan(&gnovel.ID, &gnovel.CreatedAt)
 }
