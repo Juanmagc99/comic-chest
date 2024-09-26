@@ -115,9 +115,22 @@ func (app *application) updateGraphicNovelHandler(w http.ResponseWriter, r *http
 
 // Handler for DELETE /v1/gnovels/:id
 func (app *application) deleteGraphicNovelHandler(w http.ResponseWriter, r *http.Request) {
-	// Aquí iría la lógica para eliminar una graphic novel por su ID
-	id := r.URL.Query().Get(":id")
-	fmt.Fprintf(w, "Deleting graphic novel with ID: %s\n", id)
+	id, err := app.readIntParam(r, "id")
+	if err != nil {
+		app.notFoundResponse(w, r)
+		return
+	}
+
+	err = app.models.Gnovels.Delete(id)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusOK, envelope{"message": "gnovel succesfully created"}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
 }
 
 // Handler for GET /v1/gnovels/:id/chapter/:nchapter
