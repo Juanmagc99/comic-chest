@@ -15,7 +15,7 @@ var genres = []string{"Action", "Adventure", "Comedy", "Drama", "Fantasy", "Hist
 	"Horror", "Isekai", "Magic", "Martial Arts", "Mecha", "Military", "Mystery", "Psychological",
 	"Romance", "School Life", "Sci-Fi", "Seinen", "Shoujo", "Shounen", "Slice of Life", "Sports",
 	"Supernatural", "Thriller", "Tragedy", "Vampire"}
-var status = []string{"ongoing", "ended", ""}
+var status = []string{"ongoing", "completed", ""}
 
 type Gnovel struct {
 	ID          int64     `json:"-"`
