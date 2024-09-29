@@ -155,9 +155,9 @@ func (m GnovelModel) Update(gnovel *Gnovel) error {
 	query := `
 		UPDATE gnovels
 		SET gn_type = $1, title = $2, description = $3, genres = $4, 
-		author = $5, year = $6, status = $7, 
+		author = $5, year = $6, status = $7 
 		WHERE id = $8
-		RETURNING ID`
+		RETURNING id`
 
 	args := []any{
 		gnovel.GNType,

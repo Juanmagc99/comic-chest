@@ -135,6 +135,12 @@ func (app *application) updateGraphicNovelHandler(w http.ResponseWriter, r *http
 		Year        *int32   `json:"year"`
 	}
 
+	err = app.readJSON(w, r, &input)
+	if err != nil {
+		app.badRequestResponse(w, r, err)
+		return
+	}
+
 	if input.GNType != nil {
 		gnovel.GNType = *input.GNType
 	}
