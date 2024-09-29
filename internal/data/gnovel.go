@@ -34,7 +34,7 @@ type GnovelModel struct {
 	DB *sql.DB
 }
 
-func ValidateMovie(v *validator.Validator, gnovel *Gnovel) {
+func ValidateGnovel(v *validator.Validator, gnovel *Gnovel) {
 	v.Check(gnovel.Title != "", "title", "must be provided")
 	v.Check(len(gnovel.Title) <= 300, "title", "must not be more than 300 bytes long")
 
@@ -146,6 +146,36 @@ func (m GnovelModel) Delete(id int64) error {
 
 	if rowsAffected == 0 {
 		return ErrRecordNotFound
+	}
+
+	return nil
+}
+
+func (m GnovelModel) Update(gnovel *Gnovel) error {
+	query := `
+		UPDATE gnovels
+		SET gn_type = $1, title = $2, description = $3, genres = $4, 
+		author = $5, year = $6, status = $7, 
+		WHERE id = $8
+		RETURNING ID`
+
+	args := []any{
+		gnovel.GNType,
+		gnovel.Title,
+		gnovel.Description,
+		pq.Array(gnovel.Genres),
+		gnovel.Author,
+		gnovel.Year,
+		gnovel.Status,
+		gnovel.ID,
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	err := m.DB.QueryRowContext(ctx, query, args...).Scan(&gnovel.ID)
+	if err != nil {
+		return err
 	}
 
 	return nil
