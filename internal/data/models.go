@@ -11,11 +11,13 @@ var (
 )
 
 type Models struct {
-	Gnovels GnovelModel
+	Gnovels  GnovelModel
+	Chapters ChapterModel
 }
 
 func NewModels(db *sql.DB) Models {
 	return Models{
-		Gnovels: GnovelModel{DB: db},
+		Gnovels:  GnovelModel{DB: db},
+		Chapters: ChapterModel{DB: db},
 	}
 }
