@@ -4,7 +4,7 @@ This is a backend server under development for a comic application. The goal is 
 
 ## Features
 
-- **Comic CRUD:** Create, read, update, and delete comic information.
+- **Graphic novels + chapters CRUD:** Create, read, update, and delete comic information.
 - **RESTful API:** The application follows a REST-based design.
-- **Database management:** Persistent storage for comic data.
+- **Database management:** Persistent storage for graphic novel data.
 - **Authentication and authorization:** Currently under development. (On development)
