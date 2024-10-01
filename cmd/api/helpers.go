@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -81,7 +83,6 @@ func (app *application) readJSON(w http.ResponseWriter, r *http.Request, dst any
 		// In some circumstances Decode() may also return an io.ErrUnexpectedEOF error
 		// for syntax errors in the JSON. So we check for this using errors.Is() and
 		// return a generic error message. There is an open issue regarding this at
-		// https://github.com/golang/go/issues/25956.
 		case errors.Is(err, io.ErrUnexpectedEOF):
 			return errors.New("body contains badly-formed JSON")
 
@@ -141,4 +142,28 @@ func (app *application) readJSON(w http.ResponseWriter, r *http.Request, dst any
 	}
 
 	return nil
+}
+
+func (app *application) uploadChapter(id int64, num int, gndata io.Reader) (string, error) {
+	folderPath := filepath.Join("..", "data", fmt.Sprintf("%d", id))
+
+	err := os.MkdirAll(folderPath, 0755)
+	if err != nil {
+		return "", fmt.Errorf("error creating directory: %v", err)
+	}
+
+	filePath := filepath.Join(folderPath, fmt.Sprintf("%d.cbz", num))
+
+	file, err := os.Create(filePath)
+	if err != nil {
+		return "", fmt.Errorf("error creating file: %v", err)
+	}
+	defer file.Close()
+
+	_, err = io.Copy(file, gndata)
+	if err != nil {
+		return "", fmt.Errorf("error saving chapter data: %v", err)
+	}
+
+	return filePath, nil
 }

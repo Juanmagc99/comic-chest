@@ -23,7 +23,7 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodPatch, "/v1/gnovels/:id", app.updateGraphicNovelHandler)
 	router.HandlerFunc(http.MethodDelete, "/v1/gnovels/:id", app.deleteGraphicNovelHandler)
 
-	router.HandlerFunc(http.MethodGet, "/v1/gnovels/:id/chapter/:nchapter", app.healthcheckHandler)
+	router.HandlerFunc(http.MethodPost, "/v1/gnovels/:id/chapter/:nchapter", app.createGraphicNovelChapterHandler)
 	router.HandlerFunc(http.MethodPut, "/v1/gnovels/:id/chapter/:nchapter", app.healthcheckHandler)
 	router.HandlerFunc(http.MethodDelete, "/v1/gnovels/:id/chapter/:nchapter", app.healthcheckHandler)
 
