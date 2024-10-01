@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"strconv"
 
 	"juanmagc99.comic-chest/internal/data"
 	"juanmagc99.comic-chest/internal/validator"
@@ -29,13 +28,13 @@ func (app *application) createGraphicNovelChapterHandler(w http.ResponseWriter, 
 		return
 	}
 
-	gnovelID, err := strconv.ParseInt(r.FormValue("gnovel_id"), 10, 64)
+	id, err := app.readIntParam(r, "id")
 	if err != nil {
 		app.badRequestResponse(w, r, err)
 		return
 	}
 
-	chpNumber, err := strconv.Atoi(r.FormValue("number"))
+	nchapter, err := app.readIntParam(r, "nchapter")
 	if err != nil {
 		app.badRequestResponse(w, r, err)
 		return
@@ -50,8 +49,8 @@ func (app *application) createGraphicNovelChapterHandler(w http.ResponseWriter, 
 	defer file.Close()
 
 	chapter := &data.Chapter{
-		GnovelID: gnovelID,
-		Number:   chpNumber,
+		GnovelID: id,
+		Number:   int(nchapter),
 	}
 
 	v := validator.New()
