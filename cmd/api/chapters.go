@@ -3,22 +3,41 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	"juanmagc99.comic-chest/internal/data"
 	"juanmagc99.comic-chest/internal/validator"
 )
 
-// Handler for GET /v1/gnovels/:id/chapter/:nchapter
-func (app *application) getGraphicNovelChapterHandler(w http.ResponseWriter, r *http.Request) {
-	// Aquí iría la lógica para obtener un capítulo de una graphic novel por su número de capítulo
-	id := r.URL.Query().Get(":id")
-	nchapter := r.URL.Query().Get(":nchapter")
-	fmt.Fprintf(w, "Getting chapter %s of graphic novel with ID: %s\n", nchapter, id)
+// Handler for GET /v1/gnovels/:id/chapter/:number
+func (app *application) getChapterHandler(w http.ResponseWriter, r *http.Request) {
+	id, err := app.readIntParam(r, "id")
+	if err != nil {
+		app.badRequestResponse(w, r, err)
+		return
+	}
+
+	number, err := app.readIntParam(r, "number")
+	if err != nil {
+		app.badRequestResponse(w, r, err)
+		return
+	}
+
+	chapter, err := app.models.Chapters.Get(id, int(number))
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusOK, envelope{"chapter": chapter}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
 }
 
-// Handler for GET /v1/gnovels/:id/chapter/:nchapter
-func (app *application) createGraphicNovelChapterHandler(w http.ResponseWriter, r *http.Request) {
-	const maxUploadSize = 100 * 1024 * 1024 // 50MB
+// Handler for POST /v1/gnovels/:id/chapter/:number
+func (app *application) createChapterHandler(w http.ResponseWriter, r *http.Request) {
+	const maxUploadSize = 30 * 1024 * 1024 // 30MB
 
 	r.Body = http.MaxBytesReader(w, r.Body, maxUploadSize)
 
@@ -34,23 +53,29 @@ func (app *application) createGraphicNovelChapterHandler(w http.ResponseWriter, 
 		return
 	}
 
-	nchapter, err := app.readIntParam(r, "nchapter")
+	number, err := app.readIntParam(r, "number")
 	if err != nil {
 		app.badRequestResponse(w, r, err)
 		return
 	}
 
 	// Recoger el archivo subido (campo "file")
-	file, _, err := r.FormFile("file")
+	file, fileheader, err := r.FormFile("file")
 	if err != nil {
 		app.badRequestResponse(w, r, fmt.Errorf("unable to obtain archive: %v", err))
 		return
 	}
+
 	defer file.Close()
+
+	filename := fileheader.Filename
+	if !strings.HasSuffix(filename, ".cbz") {
+		app.badRequestResponse(w, r, fmt.Errorf("only archives with .cbz are allowed"))
+	}
 
 	chapter := &data.Chapter{
 		GnovelID: id,
-		Number:   int(nchapter),
+		Number:   int(number),
 	}
 
 	v := validator.New()
@@ -82,18 +107,39 @@ func (app *application) createGraphicNovelChapterHandler(w http.ResponseWriter, 
 
 }
 
-// Handler for PUT /v1/gnovels/:id/chapter/:nchapter
-func (app *application) updateGraphicNovelChapterHandler(w http.ResponseWriter, r *http.Request) {
-	// Aquí iría la lógica para actualizar un capítulo de una graphic novel
-	id := r.URL.Query().Get(":id")
-	nchapter := r.URL.Query().Get(":nchapter")
-	fmt.Fprintf(w, "Updating chapter %s of graphic novel with ID: %s\n", nchapter, id)
+// Handler for PUT /v1/gnovels/:id/chapter/:number
+func (app *application) updateChapterHandler(w http.ResponseWriter, r *http.Request) {
+
 }
 
-// Handler for DELETE /v1/gnovels/:id/chapter/:nchapter
-func (app *application) deleteGraphicNovelChapterHandler(w http.ResponseWriter, r *http.Request) {
-	// Aquí iría la lógica para eliminar un capítulo de una graphic novel
-	id := r.URL.Query().Get(":id")
-	nchapter := r.URL.Query().Get(":nchapter")
-	fmt.Fprintf(w, "Deleting chapter %s of graphic novel with ID: %s\n", nchapter, id)
+// Handler for DELETE /v1/gnovels/:id/chapter/:number
+func (app *application) deleteChapterHandler(w http.ResponseWriter, r *http.Request) {
+	id, err := app.readIntParam(r, "id")
+	if err != nil {
+		app.badRequestResponse(w, r, err)
+		return
+	}
+
+	number, err := app.readIntParam(r, "number")
+	if err != nil {
+		app.badRequestResponse(w, r, err)
+		return
+	}
+
+	err = app.deleteFile(id, int(number))
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	err = app.models.Chapters.Delete(id, int(number))
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusOK, envelope{"message": "chapter deleted succesfully"}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
 }
