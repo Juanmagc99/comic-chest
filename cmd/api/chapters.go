@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"juanmagc99.comic-chest/internal/data"
@@ -29,10 +30,10 @@ func (app *application) getChapterHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	err = app.writeJSON(w, http.StatusOK, envelope{"chapter": chapter}, nil)
-	if err != nil {
-		app.serverErrorResponse(w, r, err)
-	}
+	fmt.Println(chapter.FilePath)
+	w.Header().Set("Content-Disposition", "attachment; filename="+strconv.Itoa(chapter.Number)+".cbz")
+	w.Header().Set("Content-Type", "application/zip")
+	http.ServeFile(w, r, chapter.FilePath)
 }
 
 // Handler for POST /v1/gnovels/:id/chapter/:number
