@@ -19,7 +19,6 @@ var status = []string{"ongoing", "completed", ""}
 
 type Gnovel struct {
 	ID          int64     `json:"-"`
-	CreatedAt   time.Time `json:"-"`
 	GNType      string    `json:"type"`
 	Title       string    `json:"title"`
 	Description string    `json:"description"`
@@ -28,6 +27,7 @@ type Gnovel struct {
 	NChapers    int       `json:"nchapters"`
 	Author      string    `json:"author"`
 	Year        int32     `json:"year"`
+	CreatedAt   time.Time `json:"-"`
 }
 
 type GnovelModel struct {
@@ -63,6 +63,56 @@ func ValidateGnovel(v *validator.Validator, gnovel *Gnovel) {
 
 	v.Check(gnovel.NChapers >= 0, "nchapters", "chapters must be equal or greater than 0")
 
+}
+
+func (m GnovelModel) GetAll(title string, genres []string, filters Filters) ([]*Gnovel, error) {
+	// Construct the SQL query to retrieve all movie records.
+	query := `
+	SELECT *
+	FROM gnovels
+	ORDER BY id`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	rows, err := m.DB.QueryContext(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	gnovels := []*Gnovel{}
+
+	for rows.Next() {
+
+		var gnovel Gnovel
+
+		err := rows.Scan(
+			&gnovel.ID,
+			&gnovel.CreatedAt,
+			&gnovel.GNType,
+			&gnovel.Title,
+			&gnovel.Description,
+			pq.Array(&gnovel.Genres),
+			&gnovel.Status,
+			&gnovel.NChapers,
+			&gnovel.Author,
+			&gnovel.Year,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		gnovels = append(gnovels, &gnovel)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return gnovels, nil
 }
 
 func (m GnovelModel) Insert(gnovel *Gnovel) error {

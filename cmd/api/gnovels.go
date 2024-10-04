@@ -13,8 +13,41 @@ import (
 
 // Handler for GET /v1/gnovels
 func (app *application) listGraphicNovelsHandler(w http.ResponseWriter, r *http.Request) {
-	// Aquí iría la lógica para listar todas las graphic novels
-	fmt.Fprintln(w, "Listing all graphic novels")
+
+	var input struct {
+		Title   string
+		Genres  []string
+		Filters data.Filters
+	}
+
+	v := validator.New()
+
+	qs := r.URL.Query()
+
+	input.Title = app.readString(qs, "title", "")
+	input.Genres = app.readSliceString(qs, "genres", []string{})
+	input.Filters.Page = app.readInt(qs, "page", 1, v)
+	input.Filters.PageSize = app.readInt(qs, "page_size", 20, v)
+	input.Filters.Sort = app.readString(qs, "sort", "id")
+
+	input.Filters.SortSafelist = []string{"id", "title", "year", "runtime", "-id", "-title", "-year", "-runtime"}
+
+	if data.ValidateFilters(v, input.Filters); !v.Valid() {
+		app.failedValidationResponse(w, r, v.Errors)
+		return
+	}
+
+	gnovels, err := app.models.Gnovels.GetAll(input.Title, input.Genres, input.Filters)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusOK, envelope{"gnovels": gnovels}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
 }
 
 // Handler for POST /v1/gnovels

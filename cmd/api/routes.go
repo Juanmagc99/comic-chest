@@ -16,7 +16,7 @@ func (app *application) routes() http.Handler {
 
 	router.HandlerFunc(http.MethodGet, "/v1/healthcheck", app.healthcheckHandler)
 
-	router.HandlerFunc(http.MethodGet, "/v1/gnovels", app.healthcheckHandler)
+	router.HandlerFunc(http.MethodGet, "/v1/gnovels", app.listGraphicNovelsHandler)
 
 	router.HandlerFunc(http.MethodPost, "/v1/gnovels", app.createGraphicNovelHandler)
 	router.HandlerFunc(http.MethodGet, "/v1/gnovels/:id", app.getGraphicNovelHandler)
