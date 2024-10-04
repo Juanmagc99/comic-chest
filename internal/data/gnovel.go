@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/lib/pq"
@@ -65,32 +66,36 @@ func ValidateGnovel(v *validator.Validator, gnovel *Gnovel) {
 
 }
 
-func (m GnovelModel) GetAll(title string, genres []string, filters Filters) ([]*Gnovel, error) {
+func (m GnovelModel) GetAll(title string, genres []string, filters Filters) ([]*Gnovel, Metadata, error) {
 	// Construct the SQL query to retrieve all movie records.
-	query := `
-	SELECT *
+	query := fmt.Sprintf(`
+	SELECT COUNT(*) OVER(), *
 	FROM gnovels
 	WHERE (to_tsvector('simple', title) @@ plainto_tsquery('simple', $1) OR $1 = '')
 	AND (genres @> $2 OR $2 = '{}')
-	ORDER BY id`
+	ORDER BY %s %s, id ASC
+	LIMIT $3 OFFSET $4`, filters.sortColumn(), filters.sortDirection())
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	rows, err := m.DB.QueryContext(ctx, query, title, pq.Array(genres))
+	rows, err := m.DB.QueryContext(ctx, query, title, pq.Array(genres), filters.limit(), filters.offset())
 	if err != nil {
-		return nil, err
+		return nil, Metadata{}, err
 	}
 
 	defer rows.Close()
 
 	gnovels := []*Gnovel{}
 
+	totalRecords := 0
+
 	for rows.Next() {
 
 		var gnovel Gnovel
 
 		err := rows.Scan(
+			&totalRecords,
 			&gnovel.ID,
 			&gnovel.CreatedAt,
 			&gnovel.GNType,
@@ -104,17 +109,19 @@ func (m GnovelModel) GetAll(title string, genres []string, filters Filters) ([]*
 		)
 
 		if err != nil {
-			return nil, err
+			return nil, Metadata{}, err
 		}
 
 		gnovels = append(gnovels, &gnovel)
 	}
 
 	if err = rows.Err(); err != nil {
-		return nil, err
+		return nil, Metadata{}, err
 	}
 
-	return gnovels, nil
+	metadata := calculateMetadata(totalRecords, filters.Page, filters.PageSize)
+
+	return gnovels, metadata, nil
 }
 
 func (m GnovelModel) Insert(gnovel *Gnovel) error {

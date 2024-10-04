@@ -30,20 +30,20 @@ func (app *application) listGraphicNovelsHandler(w http.ResponseWriter, r *http.
 	input.Filters.PageSize = app.readInt(qs, "page_size", 20, v)
 	input.Filters.Sort = app.readString(qs, "sort", "id")
 
-	input.Filters.SortSafelist = []string{"id", "title", "year", "runtime", "-id", "-title", "-year", "-runtime"}
+	input.Filters.SortSafelist = []string{"id", "title", "year", "-id", "-title", "-year"}
 
 	if data.ValidateFilters(v, input.Filters); !v.Valid() {
 		app.failedValidationResponse(w, r, v.Errors)
 		return
 	}
 
-	gnovels, err := app.models.Gnovels.GetAll(input.Title, input.Genres, input.Filters)
+	gnovels, metadata, err := app.models.Gnovels.GetAll(input.Title, input.Genres, input.Filters)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return
 	}
 
-	err = app.writeJSON(w, http.StatusOK, envelope{"gnovels": gnovels}, nil)
+	err = app.writeJSON(w, http.StatusOK, envelope{"gnovels": gnovels, "metadata": metadata}, nil)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return
