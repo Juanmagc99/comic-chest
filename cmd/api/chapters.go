@@ -3,11 +3,36 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"juanmagc99.comic-chest/internal/data"
 	"juanmagc99.comic-chest/internal/validator"
 )
+
+func (app *application) serveChapterHandler(w http.ResponseWriter, r *http.Request) {
+	id, err := app.readIntParam(r, "id")
+	if err != nil {
+		app.badRequestResponse(w, r, err)
+		return
+	}
+
+	number, err := app.readIntParam(r, "number")
+	if err != nil {
+		app.badRequestResponse(w, r, err)
+		return
+	}
+
+	chapter, err := app.models.Chapters.Get(id, int(number))
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	w.Header().Set("Content-Disposition", "attachment; filename="+strconv.Itoa(chapter.Number)+".cbz")
+	w.Header().Set("Content-Type", "application/zip")
+	http.ServeFile(w, r, chapter.FilePath)
+}
 
 // Handler for GET /v1/gnovels/:id/chapter/:number
 func (app *application) getChapterHandler(w http.ResponseWriter, r *http.Request) {
@@ -29,10 +54,6 @@ func (app *application) getChapterHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	/*fmt.Println(chapter.FilePath)
-	w.Header().Set("Content-Disposition", "attachment; filename="+strconv.Itoa(chapter.Number)+".cbz")
-	w.Header().Set("Content-Type", "application/zip")
-	http.ServeFile(w, r, chapter.FilePath)*/
 	err = app.writeJSON(w, http.StatusOK, envelope{"chapter": chapter}, nil)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)

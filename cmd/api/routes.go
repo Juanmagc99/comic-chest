@@ -28,6 +28,8 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodPut, "/v1/gnovels/:id/chapter/:number", app.updateChapterHandler)
 	router.HandlerFunc(http.MethodDelete, "/v1/gnovels/:id/chapter/:number", app.deleteChapterHandler)
 
+	router.HandlerFunc(http.MethodGet, "/v1/serve/:id/chapter/:number", app.serveChapterHandler)
+
 	// Return the httprouter instance.
 	return app.recoverPanic(router)
 }

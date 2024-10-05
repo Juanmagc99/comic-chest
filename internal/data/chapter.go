@@ -13,7 +13,7 @@ type Chapter struct {
 	ID        int64     `json:"-"`
 	GnovelID  int64     `json:"gnovel_id"`
 	Number    int       `json:"number"`
-	FilePath  string    `json:"filepath"`
+	FilePath  string    `json:"-"`
 	CreatedAt time.Time `json:"-"`
 }
 
