@@ -4,9 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"flag"
-	"fmt"
 	"log/slog"
-	"net/http"
 	"os"
 	"time"
 
@@ -35,9 +33,10 @@ func main() {
 
 	flag.IntVar(&cfg.port, "port", 4000, "API server port")
 	flag.StringVar(&cfg.env, "env", "development", "Environment (development|staging|production)")
-
 	flag.StringVar(&cfg.db.dsn, "db-dsn", "postgres://comichest:1234@localhost/comichest?sslmode=disable", "PostgreSQL DSN")
-	//Create logger which writes log entries to the stardard out
+
+	flag.Parse()
+
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 
 	db, err := openDB(cfg)
@@ -52,20 +51,7 @@ func main() {
 		models: data.NewModels(db),
 	}
 
-	// Declare a HTTP server which listens on the port provided in the config struct,
-	// uses the servemux we created above as the handler, has some sensible timeout
-	// settings and writes any log messages to the structured logger at Error level.
-	srv := &http.Server{
-		Addr:         fmt.Sprintf("localhost:%d", cfg.port),
-		Handler:      app.routes(),
-		IdleTimeout:  time.Minute,
-		ReadTimeout:  5 * time.Second,
-		WriteTimeout: 10 * time.Second,
-		ErrorLog:     slog.NewLogLogger(logger.Handler(), slog.LevelError),
-	}
-
-	logger.Info("starting server", "addr", srv.Addr, "env", cfg.env)
-	err = srv.ListenAndServe()
+	err = app.server()
 	logger.Error(err.Error())
 	os.Exit(1)
 }
