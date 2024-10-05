@@ -32,6 +32,51 @@ func ValidateChapter(v *validator.Validator, chp *Chapter, gm GnovelModel) {
 	//v.Check(chp.PageCount >= 1, "page_count", "A chapter must have at least one page")
 }
 
+func (m ChapterModel) GetAll(id int64) ([]*Chapter, error) {
+	query := `
+		SELECT *
+		FROM chapters
+		WHERE gnovelid = $1
+		ORDER BY id ASC`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	rows, err := m.DB.QueryContext(ctx, query, id)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	chapters := []*Chapter{}
+
+	for rows.Next() {
+
+		var chapter Chapter
+
+		err := rows.Scan(
+			&chapter.ID,
+			&chapter.GnovelID,
+			&chapter.Number,
+			&chapter.FilePath,
+			&chapter.CreatedAt,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		chapters = append(chapters, &chapter)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return chapters, nil
+}
+
 func (m ChapterModel) Insert(chapter *Chapter) error {
 	query := `
 		INSERT INTO chapters (gnovelid, number, filepath)

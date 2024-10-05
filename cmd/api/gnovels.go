@@ -118,7 +118,12 @@ func (app *application) getGraphicNovelHandler(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	err = app.writeJSON(w, http.StatusOK, envelope{"gnovel": gnovel}, nil)
+	chapters, err := app.models.Chapters.GetAll(id)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
+
+	err = app.writeJSON(w, http.StatusOK, envelope{"gnovel": gnovel, "chapters": chapters}, nil)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 	}
