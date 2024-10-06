@@ -30,6 +30,8 @@ func (app *application) routes() http.Handler {
 
 	router.HandlerFunc(http.MethodGet, "/v1/serve/:id/chapter/:number", app.serveChapterHandler)
 
+	router.HandlerFunc(http.MethodPost, "/v1/users", app.createUserHandler)
+
 	// Return the httprouter instance.
 	return app.recoverPanic(router)
 }
