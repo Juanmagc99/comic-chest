@@ -14,6 +14,7 @@ type Models struct {
 	Gnovels  GnovelModel
 	Chapters ChapterModel
 	Users    UserModel
+	Tokens   TokenModel
 }
 
 func NewModels(db *sql.DB) Models {
@@ -21,5 +22,6 @@ func NewModels(db *sql.DB) Models {
 		Gnovels:  GnovelModel{DB: db},
 		Chapters: ChapterModel{DB: db},
 		Users:    UserModel{DB: db},
+		Tokens:   TokenModel{DB: db},
 	}
 }
