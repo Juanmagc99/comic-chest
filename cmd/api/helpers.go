@@ -184,7 +184,6 @@ func (app *application) deleteFile(id int64, num int) error {
 func (app *application) background(fn func()) {
 
 	go func() {
-
 		defer func() {
 			if err := recover(); err != nil {
 				app.logger.Error(fmt.Sprintf("%v", err))

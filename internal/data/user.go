@@ -85,7 +85,9 @@ func (m UserModel) Insert(user *User) error {
 	INSERT INTO users (name, email, password_hash, activated)
 	VALUES ($1, $2, $3, $4)
 	RETURNING id, created_at`
+
 	args := []any{user.Name, user.Email, user.Password.hash, user.Activated}
+
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
