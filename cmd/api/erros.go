@@ -51,3 +51,8 @@ func (app *application) editConflictResponse(w http.ResponseWriter, r *http.Requ
 	message := "unable to update the record due to an edit conflict, please try again"
 	app.errorResponse(w, r, http.StatusConflict, message)
 }
+
+func (app *application) invalidCredentialsResponse(w http.ResponseWriter, r *http.Request) {
+	message := "invalid authentication credentials"
+	app.errorResponse(w, r, http.StatusUnauthorized, message)
+}

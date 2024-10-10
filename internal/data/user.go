@@ -15,6 +15,8 @@ var (
 	ErrDuplicateEmail = errors.New("duplicate email")
 )
 
+var AnonymousUser = &User{}
+
 type User struct {
 	ID        int64     `json:"id"`
 	Name      string    `json:"name"`
@@ -32,6 +34,10 @@ type password struct {
 
 type UserModel struct {
 	DB *sql.DB
+}
+
+func (u *User) IsAnonymous() bool {
+	return u == AnonymousUser
 }
 
 func ValidateEmail(v *validator.Validator, email string) {
