@@ -36,7 +36,7 @@ func (m ChapterModel) GetAll(id int64) ([]*Chapter, error) {
 	query := `
 		SELECT *
 		FROM chapters
-		WHERE gnovelid = $1
+		WHERE gnovel_id = $1
 		ORDER BY id ASC`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
@@ -98,7 +98,7 @@ func (m ChapterModel) Get(id int64, number int) (*Chapter, error) {
 	query := `
 		SELECT *
 		FROM chapters
-		WHERE gnovelid = $1 AND number = $2
+		WHERE gnovel_id = $1 AND number = $2
 	`
 
 	var chapter Chapter

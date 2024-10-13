@@ -16,19 +16,19 @@ func (app *application) routes() http.Handler {
 
 	router.HandlerFunc(http.MethodGet, "/v1/healthcheck", app.healthcheckHandler)
 
-	router.HandlerFunc(http.MethodGet, "/v1/gnovels", app.listGraphicNovelsHandler)
+	router.HandlerFunc(http.MethodGet, "/v1/gnovels", app.requireActivatedUser(app.listGraphicNovelsHandler))
 
-	router.HandlerFunc(http.MethodPost, "/v1/gnovels", app.createGraphicNovelHandler)
-	router.HandlerFunc(http.MethodGet, "/v1/gnovels/:id", app.getGraphicNovelHandler)
-	router.HandlerFunc(http.MethodPatch, "/v1/gnovels/:id", app.updateGraphicNovelHandler)
-	router.HandlerFunc(http.MethodDelete, "/v1/gnovels/:id", app.deleteGraphicNovelHandler)
+	router.HandlerFunc(http.MethodPost, "/v1/gnovels", app.requireActivatedUser(app.createGraphicNovelHandler))
+	router.HandlerFunc(http.MethodGet, "/v1/gnovels/:id", app.requireActivatedUser(app.getGraphicNovelHandler))
+	router.HandlerFunc(http.MethodPatch, "/v1/gnovels/:id", app.requireActivatedUser(app.updateGraphicNovelHandler))
+	router.HandlerFunc(http.MethodDelete, "/v1/gnovels/:id", app.requireActivatedUser(app.deleteGraphicNovelHandler))
 
-	router.HandlerFunc(http.MethodGet, "/v1/gnovels/:id/chapter/:number", app.getChapterHandler)
-	router.HandlerFunc(http.MethodPost, "/v1/gnovels/:id/chapter/:number", app.createChapterHandler)
-	router.HandlerFunc(http.MethodPut, "/v1/gnovels/:id/chapter/:number", app.updateChapterHandler)
-	router.HandlerFunc(http.MethodDelete, "/v1/gnovels/:id/chapter/:number", app.deleteChapterHandler)
+	router.HandlerFunc(http.MethodGet, "/v1/gnovels/:id/chapter/:number", app.requireActivatedUser(app.getChapterHandler))
+	router.HandlerFunc(http.MethodPost, "/v1/gnovels/:id/chapter/:number", app.requireActivatedUser(app.createChapterHandler))
+	router.HandlerFunc(http.MethodPut, "/v1/gnovels/:id/chapter/:number", app.requireActivatedUser(app.updateChapterHandler))
+	router.HandlerFunc(http.MethodDelete, "/v1/gnovels/:id/chapter/:number", app.requireActivatedUser(app.deleteChapterHandler))
 
-	router.HandlerFunc(http.MethodGet, "/v1/serve/:id/chapter/:number", app.serveChapterHandler)
+	router.HandlerFunc(http.MethodGet, "/v1/serve/:id/chapter/:number", app.requireActivatedUser(app.serveChapterHandler))
 
 	router.HandlerFunc(http.MethodPost, "/v1/users", app.createUserHandler)
 	router.HandlerFunc(http.MethodPut, "/v1/users/activated", app.activateUserHandler)

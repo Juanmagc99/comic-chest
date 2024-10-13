@@ -97,7 +97,6 @@ func (m GnovelModel) GetAll(title string, genres []string, filters Filters) ([]*
 		err := rows.Scan(
 			&totalRecords,
 			&gnovel.ID,
-			&gnovel.CreatedAt,
 			&gnovel.GNType,
 			&gnovel.Title,
 			&gnovel.Description,
@@ -106,6 +105,7 @@ func (m GnovelModel) GetAll(title string, genres []string, filters Filters) ([]*
 			&gnovel.NChapers,
 			&gnovel.Author,
 			&gnovel.Year,
+			&gnovel.CreatedAt,
 		)
 
 		if err != nil {
@@ -126,7 +126,7 @@ func (m GnovelModel) GetAll(title string, genres []string, filters Filters) ([]*
 
 func (m GnovelModel) Insert(gnovel *Gnovel) error {
 	query := `
-		INSERT INTO gnovels (gn_type, title, description, genres, nchapters, author, year, status)
+		INSERT INTO gnovels (gntype, title, description, genres, nchapters, author, year, status)
 		VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
 		RETURNING id, created_at
 	`
@@ -157,7 +157,6 @@ func (m GnovelModel) Get(id int64) (*Gnovel, error) {
 
 	err := m.DB.QueryRowContext(ctx, query, id).Scan(
 		&gnovel.ID,
-		&gnovel.CreatedAt,
 		&gnovel.GNType,
 		&gnovel.Title,
 		&gnovel.Description,
@@ -166,6 +165,7 @@ func (m GnovelModel) Get(id int64) (*Gnovel, error) {
 		&gnovel.NChapers,
 		&gnovel.Author,
 		&gnovel.Year,
+		&gnovel.CreatedAt,
 	)
 
 	if err != nil {
@@ -213,7 +213,7 @@ func (m GnovelModel) Delete(id int64) error {
 func (m GnovelModel) Update(gnovel *Gnovel) error {
 	query := `
 		UPDATE gnovels
-		SET gn_type = $1, title = $2, description = $3, genres = $4, 
+		SET gntype = $1, title = $2, description = $3, genres = $4, 
 		author = $5, year = $6, status = $7 
 		WHERE id = $8
 		RETURNING id`
