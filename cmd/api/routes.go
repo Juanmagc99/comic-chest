@@ -18,15 +18,15 @@ func (app *application) routes() http.Handler {
 
 	router.HandlerFunc(http.MethodGet, "/v1/gnovels", app.requirePermission("gnovels:read", app.listGraphicNovelsHandler))
 
-	router.HandlerFunc(http.MethodPost, "/v1/gnovels", app.requirePermission("gnovels:read", app.createGraphicNovelHandler))
 	router.HandlerFunc(http.MethodGet, "/v1/gnovels/:id", app.requirePermission("gnovels:read", app.getGraphicNovelHandler))
-	router.HandlerFunc(http.MethodPatch, "/v1/gnovels/:id", app.requirePermission("gnovels:read", app.updateGraphicNovelHandler))
-	router.HandlerFunc(http.MethodDelete, "/v1/gnovels/:id", app.requirePermission("gnovels:read", app.deleteGraphicNovelHandler))
+	router.HandlerFunc(http.MethodPost, "/v1/gnovels", app.requirePermission("gnovels:write", app.createGraphicNovelHandler))
+	router.HandlerFunc(http.MethodPatch, "/v1/gnovels/:id", app.requirePermission("gnovels:write", app.updateGraphicNovelHandler))
+	router.HandlerFunc(http.MethodDelete, "/v1/gnovels/:id", app.requirePermission("gnovels:write", app.deleteGraphicNovelHandler))
 
 	router.HandlerFunc(http.MethodGet, "/v1/gnovels/:id/chapter/:number", app.requirePermission("gnovels:read", app.getChapterHandler))
-	router.HandlerFunc(http.MethodPost, "/v1/gnovels/:id/chapter/:number", app.requirePermission("gnovels:read", app.createChapterHandler))
-	router.HandlerFunc(http.MethodPut, "/v1/gnovels/:id/chapter/:number", app.requirePermission("gnovels:read", app.updateChapterHandler))
-	router.HandlerFunc(http.MethodDelete, "/v1/gnovels/:id/chapter/:number", app.requirePermission("gnovels:read", app.deleteChapterHandler))
+	router.HandlerFunc(http.MethodPost, "/v1/gnovels/:id/chapter/:number", app.requirePermission("gnovels:write", app.createChapterHandler))
+	router.HandlerFunc(http.MethodPut, "/v1/gnovels/:id/chapter/:number", app.requirePermission("gnovels:write", app.updateChapterHandler))
+	router.HandlerFunc(http.MethodDelete, "/v1/gnovels/:id/chapter/:number", app.requirePermission("gnovels:write", app.deleteChapterHandler))
 
 	router.HandlerFunc(http.MethodGet, "/v1/serve/:id/chapter/:number", app.requirePermission("gnovels:read", app.serveChapterHandler))
 
