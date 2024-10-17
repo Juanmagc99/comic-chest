@@ -14,7 +14,7 @@ services:
       - SMTP_PORT=587
       - SMTP_USERNAME=your-smtp-username
       - SMTP_PASSWORD=your-smtp-password
-      - SMTP_SENDER=no-reply@example.com
+      - SMTP_SENDER=your-smtp-sender
     command: go run ./cmd/api -port=4000 -domain=0.0.0.0
   db:
     image: postgres:13
@@ -27,7 +27,7 @@ services:
       - "5430:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
-      - ./db-init/int.sql:/docker-entrypoint-initdb.d/init.sql  # Monta el script SQL
+      - ./db-init/init.sql:/docker-entrypoint-initdb.d/init.sql  # Monta el script SQL
 
 volumes:
   postgres-data:
