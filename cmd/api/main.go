@@ -18,9 +18,10 @@ import (
 const version = "1.0.0"
 
 type config struct {
-	port int
-	env  string
-	db   struct {
+	port   int
+	domain string
+	env    string
+	db     struct {
 		dsn string
 	}
 	smtp struct {
@@ -57,6 +58,7 @@ func main() {
 	}
 
 	flag.IntVar(&cfg.port, "port", 4000, "API server port")
+	flag.StringVar(&cfg.domain, "domain", "localhost", "API server port")
 	flag.StringVar(&cfg.env, "env", "development", "Environment (development|staging|production)")
 	flag.StringVar(&cfg.db.dsn, "db-dsn", os.Getenv("DB_DSN"), "PostgreSQL DSN")
 

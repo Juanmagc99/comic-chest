@@ -15,7 +15,7 @@ services:
       - SMTP_USERNAME=your-smtp-username
       - SMTP_PASSWORD=your-smtp-password
       - SMTP_SENDER=no-reply@example.com
-    command: go run ./cmd/api
+    command: go run ./cmd/api -port=4000 -domain=0.0.0.0
   db:
     image: postgres:13
     container_name: comic-chest-db
