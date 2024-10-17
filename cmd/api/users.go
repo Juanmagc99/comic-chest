@@ -52,7 +52,7 @@ func (app *application) createUserHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	err = app.models.Permissions.AddForUser(user.ID, "gnovels:read")
+	err = app.models.Permissions.AddForUser(user.ID, "gnovels:read", "gnovels:write")
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return
