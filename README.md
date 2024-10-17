@@ -31,6 +31,30 @@ Comic Chest is a backend server designed to manage a comic, manga, and graphic n
     git clone https://github.com/Juanmagc99/comic-chest.git
     docker compose up
 ```
+## Available Endpoints
+The API includes the following main endpoints:
+
+### Graphic Novels (gnovels):
+- `GET /gnovels`: Retrieves a list of graphic novels.
+- `POST /gnovels`: Creates a new graphic novel.
+- `GET /gnovels/{id}`: Retrieves a graphic novel by ID.
+- `PATCH /gnovels/{id}`: Updates an existing graphic novel.
+- `DELETE /gnovels/{id}`: Deletes a graphic novel.
+
+### Chapters:
+- `POST /gnovels/{id}/chapter`: Uploads a chapter for a specific graphic novel.
+- `GET /gnovels/{id}/chapter/{chapter_num}`: Retrieves a chapter by number.
+- `DELETE /gnovels/{id}/chapter/{chapter_num}`: Deletes a specific chapter.
+
+### Users:
+- `POST /users`: Registers a new user.
+- `PUT /users/activated`: Activates a user account.
+
+### Authentication:
+- `POST /tokens/authentication`: Generates an authentication token to access protected resources.
+
+### Health Check:
+- `GET /healthcheck`: Checks that the server is running properly.
 
 ## License
 
