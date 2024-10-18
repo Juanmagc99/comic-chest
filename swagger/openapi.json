@@ -1,0 +1,347 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "comic-chest",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:4000"
+    },
+    {
+      "url": "http://0.0.0.0:4000"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "paths": {
+    "/gnovels": {
+      "get": {
+        "tags": [
+          "default"
+        ],
+        "summary": "Get Novels",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": "1"
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": "3"
+          },
+          {
+            "name": "genres",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Fantasy"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "default"
+        ],
+        "summary": "Post gnovel",
+        "description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "type": "Comic",
+                  "title": "The Sandman",
+                  "description": "The story follows Dream, one of the Endless, who rules over the world of dreams and seeks to reclaim his power after being imprisoned for decades.",
+                  "genres": [
+                    "Fantasy",
+                    "Horror",
+                    "Supernatural"
+                  ],
+                  "status": "completed",
+                  "author": "Neil Gaiman",
+                  "year": 1989
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/gnovels/1": {
+      "get": {
+        "tags": [
+          "default"
+        ],
+        "summary": "Get gnovel",
+        "description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data.",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "default"
+        ],
+        "summary": "Update gnovel",
+        "description": "This is a PUT request and it is used to overwrite an existing piece of data. For instance, after you create an entity with a POST request, you may want to modify that later. You can do that using a PUT request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful PUT request typically returns a `200 OK`, `201 Created`, or `204 No Content` response code.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "genres": [
+                    "Action",
+                    "Drama",
+                    "Thriller",
+                    "Fantasy"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "default"
+        ],
+        "summary": "Delete gnovel",
+        "description": "This is a DELETE request, and it is used to delete data that was previously created via a POST request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful DELETE request typically returns a `200 OK`, `202 Accepted`, or `204 No Content` response code.",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/gnovels/1/chapter/1": {
+      "get": {
+        "tags": [
+          "default"
+        ],
+        "summary": "Get Chapter",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "default"
+        ],
+        "summary": "Post Chapter",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "default"
+        ],
+        "summary": "Delete Chapter",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/serve/3/chapter/1": {
+      "get": {
+        "tags": [
+          "default"
+        ],
+        "summary": "Serve Chapter",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/users": {
+      "post": {
+        "tags": [
+          "default"
+        ],
+        "summary": "Post User",
+        "requestBody": {
+          "content": {
+            "*/*": {
+              "schema": {
+                "type": "string",
+                "example": "\"{\\r\\n    \\\"name\\\":\\\"juanmagc99\\\",\\r\\n    \\\"email\\\":\\\"juanma@gmail.com\\\",\\r\\n    \\\"password\\\":\\\"pass_invent1234\\\"\\r\\n}\""
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/users/activated": {
+      "put": {
+        "tags": [
+          "default"
+        ],
+        "summary": "Put Activate User",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "token": "GKUS6OWA6YAGPEP4NLALFU2VRU"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/tokens/authentication": {
+      "post": {
+        "tags": [
+          "default"
+        ],
+        "summary": "Post Token",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "email": "juanma@gmail.com",
+                  "password": "pass_invent1234"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/v1/healthcheck": {
+      "get": {
+        "tags": [
+          "default"
+        ],
+        "summary": "Get Healthcheck",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    }
+  }
+}

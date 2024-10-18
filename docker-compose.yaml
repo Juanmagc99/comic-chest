@@ -15,7 +15,8 @@ services:
       - SMTP_USERNAME=your-smtp-username
       - SMTP_PASSWORD=your-smtp-password
       - SMTP_SENDER=your-smtp-sender
-    command: go run ./cmd/api -port=4000 -domain=0.0.0.0
+    command: go run ./cmd/api -port=4000 -domain=0.0.0.0 -cors-trusted-origins="http://localhost:8082"
+
   db:
     image: postgres:13
     container_name: comic-chest-db
@@ -27,7 +28,16 @@ services:
       - "5430:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
-      - ./db-init/init.sql:/docker-entrypoint-initdb.d/init.sql  # Monta el script SQL
+      - ./db-init/init.sql:/docker-entrypoint-initdb.d/init.sql 
 
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    container_name: "swagger-ui"
+    ports:
+      - "8082:8080"
+    volumes:
+      - ./swagger/openapi.json:/openapi.json
+    environment:
+      SWAGGER_JSON: /openapi.json
 volumes:
   postgres-data:
