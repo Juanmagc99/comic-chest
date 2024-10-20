@@ -1,10 +1,10 @@
 CREATE EXTENSION IF NOT EXISTS citext;
-drop table if exists chapters;
-drop table if exists gnovels;
+DROP TABLE IF EXISTS chapters;
+DROP TABLE IF EXISTS gnovels;
 DROP TABLE IF EXISTS tokens;
 DROP TABLE IF EXISTS users_permissions;
 DROP TABLE IF EXISTS permissions;
-drop table if exists users;
+DROP TABLE IF EXISTS users;
 
 CREATE TABLE IF NOT EXISTS gnovels (
     id BIGSERIAL PRIMARY KEY,
